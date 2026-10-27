@@ -1,0 +1,10 @@
+name: sha-keyed
+on: push
+concurrency:
+  group: build-${{ github.sha }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: go build ./...

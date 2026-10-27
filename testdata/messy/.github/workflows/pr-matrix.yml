@@ -1,0 +1,17 @@
+name: pr-matrix
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: golangci-lint run
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: go test ./...
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: go build ./...

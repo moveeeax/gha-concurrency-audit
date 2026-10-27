@@ -1,0 +1,73 @@
+name: 'gha-concurrency-audit'
+description: 'Audit .github/workflows for racing deploys and uncancelled pull-request runs, and post the table as a job summary.'
+author: 'Michael Tarassov'
+branding:
+  icon: 'git-merge'
+  color: 'yellow'
+
+inputs:
+  dir:
+    description: 'Repository root to scan.'
+    required: false
+    default: '.'
+  fail-on:
+    description: 'Fail the step when a finding at this severity or above exists: high, medium, low or never.'
+    required: false
+    default: 'high'
+  ignore:
+    description: 'Comma-separated rule names to skip, e.g. GROUP_TOO_FINE.'
+    required: false
+    default: ''
+  go-version:
+    description: 'Go toolchain used to build the auditor.'
+    required: false
+    default: 'stable'
+  summary:
+    description: 'Append the markdown report to the job summary.'
+    required: false
+    default: 'true'
+
+outputs:
+  exit-code:
+    description: '0 clean, 1 findings at or above fail-on, 2 error.'
+    value: ${{ steps.audit.outputs.exit-code }}
+  report:
+    description: 'Path to the markdown report.'
+    value: ${{ steps.audit.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: false
+
+    - name: Build auditor
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: go build -o "${{ runner.temp }}/gha-concurrency-audit" ./cmd/gha-concurrency-audit
+
+    - name: Audit workflows
+      id: audit
+      shell: bash
+      run: |
+        report="${{ runner.temp }}/gha-concurrency-audit.md"
+        # A finding is a non-zero exit on purpose, so disable the implicit -e
+        # that GitHub wraps this script in before recording the code.
+        set +e
+        "${{ runner.temp }}/gha-concurrency-audit" \
+          --dir "${{ inputs.dir }}" \
+          --format markdown \
+          --fail-on "${{ inputs.fail-on }}" \
+          --ignore "${{ inputs.ignore }}" > "$report"
+        code=$?
+        set -e
+
+        cat "$report"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+        if [ "${{ inputs.summary }}" = "true" ]; then
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit $code

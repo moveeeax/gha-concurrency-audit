@@ -1,0 +1,13 @@
+name: deploy-staging
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  rollout:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - run: kubectl rollout restart deployment/api

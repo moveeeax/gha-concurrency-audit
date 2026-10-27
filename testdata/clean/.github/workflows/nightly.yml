@@ -1,0 +1,9 @@
+name: nightly
+on:
+  schedule:
+    - cron: '0 3 * * *'
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./scripts/smoke.sh

@@ -1,0 +1,11 @@
+name: job-level-deploy
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-${{ inputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - run: helm upgrade --install api ./chart

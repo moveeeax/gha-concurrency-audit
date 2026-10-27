@@ -1,0 +1,18 @@
+name: multi-env-deploy
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: terraform
+  cancel-in-progress: false
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - run: terraform apply -auto-approve
+  production:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: terraform apply -auto-approve

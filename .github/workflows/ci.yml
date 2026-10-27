@@ -1,0 +1,35 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ['1.22', 'stable']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go vet ./...
+      - run: go build ./...
+      - run: go test ./... -race
+
+  self-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Audit this repository
+        run: |
+          set -o pipefail
+          go run ./cmd/gha-concurrency-audit --dir . --format markdown --fail-on medium \
+            | tee -a "$GITHUB_STEP_SUMMARY"

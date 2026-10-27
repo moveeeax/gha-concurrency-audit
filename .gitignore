@@ -1,0 +1,10 @@
+# Built binary at the repository root only — a bare name would also match
+# cmd/gha-concurrency-audit/ and drop its source.
+/gha-concurrency-audit
+/dist/
+
+*.test
+/coverage.out
+
+# Fixtures are part of the test suite.
+!testdata/**

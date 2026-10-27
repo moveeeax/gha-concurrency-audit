@@ -1,0 +1,14 @@
+name: deploy
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - run: terraform apply -auto-approve

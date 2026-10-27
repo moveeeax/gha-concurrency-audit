@@ -1,0 +1,12 @@
+name: integration
+on:
+  push:
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: go test -tags=integration ./...
