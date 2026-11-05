@@ -1,7 +1,7 @@
 # gha-concurrency-audit
 
 [![ci](https://github.com/moveeeax/gha-concurrency-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/moveeeax/gha-concurrency-audit/actions/workflows/ci.yml)
-[![Go](https://img.shields.io/badge/go-1.22%2B-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Go](https://img.shields.io/badge/go-1.26%2B-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 Finds the GitHub Actions workflows in a repository that can race a deploy against

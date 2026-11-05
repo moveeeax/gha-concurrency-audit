@@ -12,7 +12,7 @@ import (
 	"github.com/moveeeax/gha-concurrency-audit/internal/audit"
 )
 
-const version = "0.1.0"
+const version = "0.2.0"
 
 // Exit codes: 0 clean, 1 findings at or above --fail-on, 2 usage or parse error.
 const (
